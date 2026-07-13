@@ -81,15 +81,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "A little scrapbook of memories, photos, and videos for Oluwatoofe's birthday.",
+          "A little scrapbook of memories for my sister's birthday.",
       },
       { property: "og:title", content: "Happy Birthday, Oluwatoofe" },
       {
         property: "og:description",
-        content: "A digital scrapbook of memories for my sister.",
+        content: "A little scrapbook of memories for my sister's birthday.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Happy Birthday, Oluwatoofe" },
+      { name: "twitter:description", content: "A little scrapbook of memories for my sister's birthday." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f889ed37-257e-4557-97df-c06b2941387b/id-preview-637168c9--0ec05b0c-f8b7-4a21-a37a-6fec027e15a0.lovable.app-1783970941127.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f889ed37-257e-4557-97df-c06b2941387b/id-preview-637168c9--0ec05b0c-f8b7-4a21-a37a-6fec027e15a0.lovable.app-1783970941127.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
