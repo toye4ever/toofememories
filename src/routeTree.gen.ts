@@ -14,6 +14,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
+import { Route as AuthenticatedAdminUploadRouteImport } from './routes/_authenticated.admin.upload'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated.admin.settings'
 import { Route as AuthenticatedAdminAlbumsIndexRouteImport } from './routes/_authenticated.admin.albums.index'
 import { Route as AuthenticatedAdminAlbumsIdRouteImport } from './routes/_authenticated.admin.albums.$id'
 
@@ -41,6 +43,18 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminUploadRoute =
+  AuthenticatedAdminUploadRouteImport.update({
+    id: '/upload',
+    path: '/upload',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminAlbumsIndexRoute =
   AuthenticatedAdminAlbumsIndexRouteImport.update({
     id: '/albums/',
@@ -58,6 +72,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/upload': typeof AuthenticatedAdminUploadRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/albums/$id': typeof AuthenticatedAdminAlbumsIdRoute
   '/admin/albums/': typeof AuthenticatedAdminAlbumsIndexRoute
@@ -65,6 +81,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/upload': typeof AuthenticatedAdminUploadRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/albums/$id': typeof AuthenticatedAdminAlbumsIdRoute
   '/admin/albums': typeof AuthenticatedAdminAlbumsIndexRoute
@@ -75,6 +93,8 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/upload': typeof AuthenticatedAdminUploadRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/albums/$id': typeof AuthenticatedAdminAlbumsIdRoute
   '/_authenticated/admin/albums/': typeof AuthenticatedAdminAlbumsIndexRoute
@@ -85,17 +105,28 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin/login'
+    | '/admin/settings'
+    | '/admin/upload'
     | '/admin/'
     | '/admin/albums/$id'
     | '/admin/albums/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/login' | '/admin' | '/admin/albums/$id' | '/admin/albums'
+  to:
+    | '/'
+    | '/admin/login'
+    | '/admin/settings'
+    | '/admin/upload'
+    | '/admin'
+    | '/admin/albums/$id'
+    | '/admin/albums'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/_authenticated/admin'
     | '/admin/login'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/upload'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/albums/$id'
     | '/_authenticated/admin/albums/'
@@ -144,6 +175,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/upload': {
+      id: '/_authenticated/admin/upload'
+      path: '/upload'
+      fullPath: '/admin/upload'
+      preLoaderRoute: typeof AuthenticatedAdminUploadRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/albums/': {
       id: '/_authenticated/admin/albums/'
       path: '/albums'
@@ -162,12 +207,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminUploadRoute: typeof AuthenticatedAdminUploadRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminAlbumsIdRoute: typeof AuthenticatedAdminAlbumsIdRoute
   AuthenticatedAdminAlbumsIndexRoute: typeof AuthenticatedAdminAlbumsIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminUploadRoute: AuthenticatedAdminUploadRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminAlbumsIdRoute: AuthenticatedAdminAlbumsIdRoute,
   AuthenticatedAdminAlbumsIndexRoute: AuthenticatedAdminAlbumsIndexRoute,
