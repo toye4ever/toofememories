@@ -14,6 +14,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
+import { Route as AuthenticatedAdminAlbumsIndexRouteImport } from './routes/_authenticated.admin.albums.index'
+import { Route as AuthenticatedAdminAlbumsIdRouteImport } from './routes/_authenticated.admin.albums.$id'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -39,17 +41,33 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminAlbumsIndexRoute =
+  AuthenticatedAdminAlbumsIndexRouteImport.update({
+    id: '/albums/',
+    path: '/albums/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAlbumsIdRoute =
+  AuthenticatedAdminAlbumsIdRouteImport.update({
+    id: '/albums/$id',
+    path: '/albums/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/albums/$id': typeof AuthenticatedAdminAlbumsIdRoute
+  '/admin/albums/': typeof AuthenticatedAdminAlbumsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/albums/$id': typeof AuthenticatedAdminAlbumsIdRoute
+  '/admin/albums': typeof AuthenticatedAdminAlbumsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -58,12 +76,20 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/albums/$id': typeof AuthenticatedAdminAlbumsIdRoute
+  '/_authenticated/admin/albums/': typeof AuthenticatedAdminAlbumsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/admin/login' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/login'
+    | '/admin/'
+    | '/admin/albums/$id'
+    | '/admin/albums/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/login' | '/admin'
+  to: '/' | '/admin/login' | '/admin' | '/admin/albums/$id' | '/admin/albums'
   id:
     | '__root__'
     | '/'
@@ -71,6 +97,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/admin/login'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/albums/$id'
+    | '/_authenticated/admin/albums/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,15 +144,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/albums/': {
+      id: '/_authenticated/admin/albums/'
+      path: '/albums'
+      fullPath: '/admin/albums/'
+      preLoaderRoute: typeof AuthenticatedAdminAlbumsIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/albums/$id': {
+      id: '/_authenticated/admin/albums/$id'
+      path: '/albums/$id'
+      fullPath: '/admin/albums/$id'
+      preLoaderRoute: typeof AuthenticatedAdminAlbumsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminAlbumsIdRoute: typeof AuthenticatedAdminAlbumsIdRoute
+  AuthenticatedAdminAlbumsIndexRoute: typeof AuthenticatedAdminAlbumsIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminAlbumsIdRoute: AuthenticatedAdminAlbumsIdRoute,
+  AuthenticatedAdminAlbumsIndexRoute: AuthenticatedAdminAlbumsIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =

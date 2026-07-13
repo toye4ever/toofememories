@@ -31,7 +31,7 @@ import {
 import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 import { slugify } from "@/lib/slug";
 
-export const Route = createFileRoute("/_authenticated/admin/albums")({
+export const Route = createFileRoute("/_authenticated/admin/albums/")({
   component: AdminAlbums,
 });
 
