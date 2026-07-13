@@ -14,16 +14,169 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      albums: {
+        Row: {
+          cover_media_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          cover_media_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          cover_media_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "albums_cover_media_id_fkey"
+            columns: ["cover_media_id"]
+            isOneToOne: false
+            referencedRelation: "media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media: {
+        Row: {
+          album_id: string
+          caption: string | null
+          created_at: string
+          file_name: string
+          file_size: number | null
+          id: string
+          is_published: boolean
+          media_type: string
+          mime_type: string | null
+          sort_order: number
+          storage_path: string
+          updated_at: string
+        }
+        Insert: {
+          album_id: string
+          caption?: string | null
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          id?: string
+          is_published?: boolean
+          media_type: string
+          mime_type?: string | null
+          sort_order?: number
+          storage_path: string
+          updated_at?: string
+        }
+        Update: {
+          album_id?: string
+          caption?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          id?: string
+          is_published?: boolean
+          media_type?: string
+          mime_type?: string | null
+          sort_order?: number
+          storage_path?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "albums"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_settings: {
+        Row: {
+          footer_text: string
+          hero_subtitle: string
+          hero_title: string
+          id: number
+          intro_text: string
+          letter_text: string
+          updated_at: string
+        }
+        Insert: {
+          footer_text?: string
+          hero_subtitle?: string
+          hero_title?: string
+          id?: number
+          intro_text?: string
+          letter_text?: string
+          updated_at?: string
+        }
+        Update: {
+          footer_text?: string
+          hero_subtitle?: string
+          hero_title?: string
+          id?: number
+          intro_text?: string
+          letter_text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +303,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
