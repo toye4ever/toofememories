@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -122,6 +123,7 @@ async function walkEntry(entry: FileSystemEntry, basePath = ""): Promise<File[]>
 }
 
 function UploadPage() {
+  const queryClient = useQueryClient();
   const search = Route.useSearch();
   const targetAlbumId = search.albumId;
 
@@ -210,6 +212,7 @@ function UploadPage() {
       .from("birthday-media")
       .upload(path, entry.file, {
         contentType: entry.file.type || undefined,
+        cacheControl: "31536000",
         upsert: false,
       });
     if (upErr) {
@@ -376,6 +379,11 @@ function UploadPage() {
     await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 
     setRunning(false);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["admin", "albums"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin", "album"] }),
+      queryClient.invalidateQueries({ queryKey: ["public"] }),
+    ]);
     toast.success("Upload complete");
   };
 

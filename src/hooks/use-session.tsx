@@ -3,6 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { clearMediaUrlCache } from "@/lib/media";
 
 type SessionState = {
   session: Session | null;
@@ -46,7 +47,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         return;
       setState({ session, user: session?.user ?? null, loading: false });
       router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (event === "SIGNED_OUT") {
+        clearMediaUrlCache();
+        queryClient.removeQueries({
+          predicate: (query) => {
+            const first = query.queryKey[0];
+            return first === "admin" || first === "is-admin";
+          },
+        });
+        queryClient.invalidateQueries({ queryKey: ["public"] });
+        queryClient.invalidateQueries({ queryKey: ["site_settings"] });
+      } else {
+        queryClient.invalidateQueries();
+      }
     });
 
     return () => {

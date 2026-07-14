@@ -119,6 +119,8 @@ export type Database = {
           id: number
           intro_text: string
           letter_text: string
+          music_enabled: boolean
+          music_path: string | null
           updated_at: string
         }
         Insert: {
@@ -128,6 +130,8 @@ export type Database = {
           id?: number
           intro_text?: string
           letter_text?: string
+          music_enabled?: boolean
+          music_path?: string | null
           updated_at?: string
         }
         Update: {
@@ -137,6 +141,8 @@ export type Database = {
           id?: number
           intro_text?: string
           letter_text?: string
+          music_enabled?: boolean
+          music_path?: string | null
           updated_at?: string
         }
         Relationships: []

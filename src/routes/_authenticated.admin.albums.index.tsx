@@ -60,6 +60,7 @@ async function ensureUniqueSlug(base: string, ignoreId?: string): Promise<string
 
 function AdminAlbums() {
   const qc = useQueryClient();
+  const refreshPublic = () => qc.invalidateQueries({ queryKey: ["public"] });
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
@@ -98,6 +99,7 @@ function AdminAlbums() {
       setNewDescription("");
       setCreateOpen(false);
       qc.invalidateQueries({ queryKey: ["admin", "albums"] });
+      refreshPublic();
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -110,7 +112,10 @@ function AdminAlbums() {
         .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "albums"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "albums"] });
+      refreshPublic();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -125,6 +130,7 @@ function AdminAlbums() {
     onSuccess: () => {
       toast.success("Saved");
       qc.invalidateQueries({ queryKey: ["admin", "albums"] });
+      refreshPublic();
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -141,7 +147,10 @@ function AdminAlbums() {
       await supabase.from("albums").update({ sort_order: b.sort_order }).eq("id", a.id);
       await supabase.from("albums").update({ sort_order: a.sort_order }).eq("id", b.id);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "albums"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "albums"] });
+      refreshPublic();
+    },
   });
 
   const deleteAlbum = useMutation({
@@ -162,6 +171,7 @@ function AdminAlbums() {
     onSuccess: () => {
       toast.success("Album deleted");
       qc.invalidateQueries({ queryKey: ["admin", "albums"] });
+      refreshPublic();
     },
     onError: (e: Error) => toast.error(e.message),
   });

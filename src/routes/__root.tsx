@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "@/hooks/use-session";
+import { BackgroundMusic } from "@/components/background-music";
 
 function NotFoundComponent() {
   return (
@@ -137,6 +138,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <Outlet />
+        <BackgroundMusic />
         <Toaster richColors position="top-center" />
       </SessionProvider>
     </QueryClientProvider>

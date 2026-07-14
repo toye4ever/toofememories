@@ -86,3 +86,30 @@ publicly reachable at its `.lovable.app` URL.
 ```sql
 delete from public.user_roles where role = 'admin';
 ```
+
+## 9. Apply the public-access and performance security hotfix
+
+This repository includes `SUPABASE_HOTFIX.sql`. Run it once after syncing this
+patched version:
+
+1. Open **Lovable → Cloud → SQL Editor**.
+2. Open `SUPABASE_HOTFIX.sql` from the repository.
+3. Copy the entire file into the SQL Editor and click **Run**.
+4. Refresh the site in an incognito window.
+
+The script is safe to run again if you are unsure whether it completed. It:
+
+- restores anonymous read access to published albums and published media;
+- keeps every upload/edit/delete action administrator-only;
+- keeps the media bucket private and uses signed URLs;
+- removes the exposed `SECURITY DEFINER` role helper that triggered the security warning;
+- adds the optional background-music settings.
+
+## 10. Add background music
+
+1. Open **Admin → Settings**.
+2. Under **Background music**, upload an MP3, M4A, WAV, or OGG file.
+3. Leave **Enable background music** switched on and save.
+4. Visitors will see a floating mute button. Browsers require one click or key
+   press before audio can begin, so the song starts after their first
+   interaction with the site.

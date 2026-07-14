@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useSession } from "@/hooks/use-session";
@@ -32,6 +33,7 @@ function AdminLayout() {
   const { user } = useSession();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!checking && user && !isAdmin) {
@@ -41,7 +43,15 @@ function AdminLayout() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate({ to: "/admin/login", replace: true });
+    queryClient.removeQueries({
+      predicate: (query) => {
+        const first = query.queryKey[0];
+        return first === "admin" || first === "is-admin";
+      },
+    });
+    await queryClient.invalidateQueries({ queryKey: ["public"] });
+    await queryClient.invalidateQueries({ queryKey: ["site_settings"] });
+    navigate({ to: "/", replace: true });
   }
 
   if (checking) {

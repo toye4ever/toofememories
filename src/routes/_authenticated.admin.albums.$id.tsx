@@ -47,6 +47,7 @@ type MediaRow = {
 function AlbumDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const refreshPublic = () => qc.invalidateQueries({ queryKey: ["public"] });
 
   const albumQuery = useQuery({
     queryKey: ["admin", "album", id],
@@ -76,7 +77,10 @@ function AlbumDetail() {
   });
 
   const paths = useMemo(
-    () => (mediaQuery.data ?? []).map((m) => m.storage_path),
+    () =>
+      (mediaQuery.data ?? [])
+        .filter((media) => media.media_type === "image")
+        .map((media) => media.storage_path),
     [mediaQuery.data],
   );
   const [urls, setUrls] = useState<Record<string, string>>({});
@@ -99,7 +103,10 @@ function AlbumDetail() {
         .eq("id", mediaId);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "album", id, "media"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "album", id, "media"] });
+      refreshPublic();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -114,6 +121,7 @@ function AlbumDetail() {
     onSuccess: () => {
       toast.success("Caption saved");
       qc.invalidateQueries({ queryKey: ["admin", "album", id, "media"] });
+      refreshPublic();
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -129,6 +137,7 @@ function AlbumDetail() {
     onSuccess: () => {
       toast.success("Cover updated");
       qc.invalidateQueries({ queryKey: ["admin", "album", id] });
+      refreshPublic();
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -145,7 +154,10 @@ function AlbumDetail() {
       await supabase.from("media").update({ sort_order: b.sort_order }).eq("id", a.id);
       await supabase.from("media").update({ sort_order: a.sort_order }).eq("id", b.id);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "album", id, "media"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "album", id, "media"] });
+      refreshPublic();
+    },
   });
 
   const deleteMedia = useMutation({
@@ -157,6 +169,7 @@ function AlbumDetail() {
     onSuccess: () => {
       toast.success("Deleted");
       qc.invalidateQueries({ queryKey: ["admin", "album", id, "media"] });
+      refreshPublic();
     },
     onError: (e: Error) => toast.error(e.message),
   });
