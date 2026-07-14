@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Heart, Video as VideoIcon } from "lucide-react";
 import { Lightbox, type LightboxItem } from "@/components/media-lightbox";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   ssr: false,
