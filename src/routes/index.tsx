@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Heart, Video as VideoIcon } from "lucide-react";
 import { Lightbox, type LightboxItem } from "@/components/media-lightbox";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -82,29 +83,42 @@ function Home() {
 
   async function playRandom() {
     setRandomLoading(true);
-    const { data, error } = await supabase
-      .from("media")
-      .select("id,storage_path,media_type,file_name,caption,albums!inner(is_published)")
-      .eq("is_published", true)
-      .eq("media_type", "video")
-      .eq("albums.is_published", true);
-    setRandomLoading(false);
-    if (error) {
-      console.error(error);
-      return;
+    try {
+      const { data: pubAlbums, error: aErr } = await supabase
+        .from("albums")
+        .select("id")
+        .eq("is_published", true);
+      if (aErr) throw aErr;
+      const ids = (pubAlbums ?? []).map((a) => a.id);
+      if (ids.length === 0) {
+        toast.info("No published videos yet.");
+        return;
+      }
+      const { data, error } = await supabase
+        .from("media")
+        .select("id,storage_path,media_type,file_name,caption")
+        .eq("is_published", true)
+        .eq("media_type", "video")
+        .in("album_id", ids);
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        toast.info("No published videos yet.");
+        return;
+      }
+      const pick = data[Math.floor(Math.random() * data.length)];
+      setRandomItem({
+        id: pick.id,
+        storage_path: pick.storage_path,
+        media_type: pick.media_type as "image" | "video",
+        file_name: pick.file_name,
+        caption: pick.caption,
+      });
+    } catch (e) {
+      console.error(e);
+      toast.error("Couldn't load a random memory.");
+    } finally {
+      setRandomLoading(false);
     }
-    if (!data || data.length === 0) {
-      alert("No published videos yet.");
-      return;
-    }
-    const pick = data[Math.floor(Math.random() * data.length)];
-    setRandomItem({
-      id: pick.id,
-      storage_path: pick.storage_path,
-      media_type: pick.media_type as "image" | "video",
-      file_name: pick.file_name,
-      caption: pick.caption,
-    });
   }
 
   const letterParagraphs = (settings.data?.letter_text ?? "")

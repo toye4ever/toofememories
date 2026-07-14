@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,7 +39,6 @@ function AlbumPage() {
         .eq("is_published", true)
         .maybeSingle();
       if (error) throw error;
-      if (!data) throw notFound();
       return data;
     },
   });
@@ -104,7 +103,7 @@ function AlbumPage() {
     <div className="min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-10">
         <Button asChild variant="ghost" size="sm" className="-ml-3 mb-4">
-          <Link to="/"><ChevronLeft className="h-4 w-4 mr-1" /> All albums</Link>
+          <Link to="/" hash="albums"><ChevronLeft className="h-4 w-4 mr-1" /> All albums</Link>
         </Button>
 
         <header className="mb-8 text-center">
@@ -133,28 +132,48 @@ function AlbumPage() {
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
-            {pageItems.map((m, i) => (
-              <button
-                key={m.id}
-                onClick={() => setLightIdx(i)}
-                className="group relative aspect-square bg-muted rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {m.media_type === "image" && urls[m.storage_path] ? (
-                  <img
-                    src={urls[m.storage_path]}
-                    alt={m.caption ?? m.file_name}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                ) : m.media_type === "video" ? (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
-                    <Play className="h-10 w-10 text-primary" fill="currentColor" />
-                  </div>
-                ) : (
-                  <div className="w-full h-full animate-pulse bg-muted" />
-                )}
-              </button>
-            ))}
+            {pageItems.map((m, i) => {
+              const url = urls[m.storage_path];
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => setLightIdx(i)}
+                  className="group relative aspect-square bg-muted rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  {m.media_type === "image" ? (
+                    url ? (
+                      <img
+                        src={url}
+                        alt={m.caption ?? m.file_name}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full animate-pulse bg-muted" />
+                    )
+                  ) : url ? (
+                    <>
+                      <video
+                        src={url}
+                        preload="metadata"
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover pointer-events-none"
+                      />
+                      <div className="absolute inset-0 bg-black/25 flex items-center justify-center opacity-90 group-hover:opacity-100 transition">
+                        <div className="rounded-full bg-white/90 p-3 shadow">
+                          <Play className="h-6 w-6 text-primary" fill="currentColor" />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
+                      <Play className="h-10 w-10 text-primary" fill="currentColor" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
 
