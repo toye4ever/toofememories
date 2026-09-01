@@ -1,3 +1,5 @@
 [build]
   command = "bun run build"
-  publish = "dist/client"
+  # Lovable's configuration includes Nitro, which emits Netlify's static
+  # assets to dist/ (and the server function to .netlify/).
+  publish = "dist"
